@@ -2,4 +2,7 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
+    id("com.google.dagger.hilt.android") version "2.50" apply false
+//    id ("org.jetbrains.kotlin.android.extensions") version "1.6.10" apply false
+
 }
