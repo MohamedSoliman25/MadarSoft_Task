@@ -8,7 +8,7 @@ import javax.inject.Singleton
 
 //@Singleton
 class UserRepositoryImp @Inject constructor(private val userDao: UserDao) :UserRepository {
-    override suspend fun insertUser(user: User) {
-        userDao.insertUser(user)
-    }
+    override suspend fun insertUser(user: User) = userDao.insertUser(user)>0
+
+    override suspend fun getAllUsers() = userDao.getAllUsers()
 }

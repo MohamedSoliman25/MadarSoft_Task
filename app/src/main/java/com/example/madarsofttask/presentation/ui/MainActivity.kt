@@ -1,10 +1,13 @@
 package com.example.madarsofttask.presentation.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.madarsofttask.R
 import com.example.madarsofttask.data.local.entity.User
 import com.example.madarsofttask.databinding.ActivityMainBinding
@@ -23,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         prepareGenderSpinner()
         handleSaveUserButton()
+        observeInsertedUserValue()
     }
 
     private fun saveUserData(user:User){
@@ -38,16 +42,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun handleSaveUserButton(){
-
         binding.btnSave.setOnClickListener {
             val user = User(
                 name = binding.editTextName.text.toString(),
-                age = binding.editTextAge.text?.toString()?.toInt(),
+                age = if(binding.editTextAge.text?.toString()!!.isEmpty()){
+                    0
+                }else{
+                    binding.editTextAge.text?.toString()?.toInt()
+                },
                 jobTitle = binding.editTextJob.text.toString(),
                 gender = binding.autoCompleteGender.text.toString()
             )
             Log.d(TAG, "handleSaveUserButton: "+user)
             saveUserData(user)
+        }
+    }
+
+    private fun observeInsertedUserValue(){
+        lifecycleScope.launchWhenStarted {
+            viewModel.insertStatus.collect { success ->
+                success?.let {
+                    if (it) {
+                        Toast.makeText(this@MainActivity, "User Added!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@MainActivity,UserDataActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this@MainActivity, "Insert Failed!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 }
